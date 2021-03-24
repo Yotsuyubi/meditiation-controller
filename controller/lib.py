@@ -14,6 +14,7 @@ class App:
         self.t = 0
         self.data_for_send = None
         self.updatable = False
+        self.maxes = [0]*10
 
 
     def connect_mindwave(self, dev):
@@ -100,7 +101,6 @@ class App:
             "meditiation": 0,
             "delta": 0,
             "theta": 0,
-            "delta": 0,
             "low_aplha": 0,
             "high_alpha": 0,
             "low_beta": 0,
@@ -140,16 +140,37 @@ class App:
         asics_to = self.ASICs[1]
         t = self.t
 
+        values = [
+            lerp(asics_from["attention"], asics_to["attention"], t),
+            lerp(asics_from["meditiation"], asics_to["meditiation"], t),
+            lerp(asics_from["ASIC"]["delta"], asics_to["ASIC"]["delta"], t),
+            lerp(asics_from["ASIC"]["theta"], asics_to["ASIC"]["theta"], t),
+            lerp(asics_from["ASIC"]["low_aplha"], asics_to["ASIC"]["low_aplha"], t),
+            lerp(asics_from["ASIC"]["high_alpha"], asics_to["ASIC"]["high_alpha"], t),
+            lerp(asics_from["ASIC"]["low_beta"], asics_to["ASIC"]["low_beta"], t),
+            lerp(asics_from["ASIC"]["high_beta"], asics_to["ASIC"]["high_beta"], t),
+            lerp(asics_from["ASIC"]["low_gamma"], asics_to["ASIC"]["low_gamma"], t),
+            lerp(asics_from["ASIC"]["mid_gamma"], asics_to["ASIC"]["mid_gamma"], t),
+        ]
+
+        for i in range(len(values)):
+
+            if self.maxes[i] < values[i]:
+                self.maxes[i] = values[i]
+
+            if self.maxes[i] != 0.0:
+                values[i] = values[i] / self.maxes[i]
+
+
         return {
-            "attention": lerp(asics_from["attention"], asics_to["attention"], t),
-            "meditiation": lerp(asics_from["meditiation"], asics_to["meditiation"], t),
-            "delta": lerp(asics_from["ASIC"]["delta"], asics_to["ASIC"]["delta"], t),
-            "theta": lerp(asics_from["ASIC"]["theta"], asics_to["ASIC"]["theta"], t),
-            "delta": lerp(asics_from["ASIC"]["delta"], asics_to["ASIC"]["delta"], t),
-            "low_aplha": lerp(asics_from["ASIC"]["low_aplha"], asics_to["ASIC"]["low_aplha"], t),
-            "high_alpha": lerp(asics_from["ASIC"]["high_alpha"], asics_to["ASIC"]["high_alpha"], t),
-            "low_beta": lerp(asics_from["ASIC"]["low_beta"], asics_to["ASIC"]["low_beta"], t),
-            "high_beta": lerp(asics_from["ASIC"]["high_beta"], asics_to["ASIC"]["high_beta"], t),
-            "low_gamma": lerp(asics_from["ASIC"]["low_gamma"], asics_to["ASIC"]["low_gamma"], t),
-            "mid_gamma": lerp(asics_from["ASIC"]["mid_gamma"], asics_to["ASIC"]["mid_gamma"], t),
+            "attention": values[0],
+            "meditiation": values[1],
+            "delta": values[2],
+            "theta": values[3],
+            "low_aplha": values[4],
+            "high_alpha": values[5],
+            "low_beta": values[6],
+            "high_beta": values[7],
+            "low_gamma": values[8],
+            "mid_gamma": values[9],
         }
