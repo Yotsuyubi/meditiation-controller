@@ -1,6 +1,7 @@
 from mindwavepy import Mindwave
 import mido
 from .utils import log, error, lerp, slide
+import time
 
 
 class App:
@@ -12,6 +13,7 @@ class App:
         self.ASICs = [None, None]
         self.t = 0
         self.data_for_send = None
+        self.updatable = False
 
 
     def connect_mindwave(self, dev):
@@ -41,14 +43,16 @@ class App:
             raise Exception
 
 
-    def update(self, rate=0.02):
+    def update(self, rate=0.05):
         self.t = self.t + rate
         if self.t > 1:
             self.t = 1
+            self.updatable = False
 
 
     def reset(self):
         self.t = 0
+        self.updatable = True
 
 
     def send_raw(self, data):
@@ -114,8 +118,8 @@ class App:
 
             data = self.mindwave.parse()
 
-            if data and data["type"] == "RAW":
-                self.send_raw(data)
+            # if data and data["type"] == "RAW":
+            #     self.send_raw(data)
 
             if data and data["type"] == "ASIC":
                 self.ASICs = slide(self.ASICs, data)
@@ -123,6 +127,8 @@ class App:
 
             if None not in self.ASICs:
                 self.data_for_send = self.get_current_asic()
+
+            if self.data_for_send is not None and self.updatable is True:
                 self.send_asic(self.data_for_send)
 
             self.update()
