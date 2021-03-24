@@ -43,7 +43,7 @@ class App:
             raise Exception
 
 
-    def update(self, rate=0.05):
+    def update(self, rate=0.003):
         self.t = self.t + rate
         if self.t > 1:
             self.t = 1

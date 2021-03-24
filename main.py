@@ -1,8 +1,8 @@
 from controller import App
 
 try:
-    app = App("/dev/tty.MindWaveMobile-SerialPo-1", 'IAC Mindwave')
-    app.send_dummy()
+    app = App("/dev/tty.MindWaveMobile-SerialPo", 'IAC Mindwave')
+    app.run()
 
 except:
     pass
